@@ -169,6 +169,36 @@ Kubernetes, also known as K8s, is an open-source system for automating deploymen
        - it specifies inputs, has user-defined logic in its body, and can create outputs. 
  - When the component template is instantiated with input parameters, we call it a task.
 
+kubectl port-forward -n kubeflow svc/ml-pipeline-ui 8080:80
+
+
+################################################################################
+# USING JENKINS FOR MLAPP DEPLOYMENT USING KUBEFLOW
+################################################################################
+#### Job1: Build ML App Artifacts and Docker Images  
+Name: 01_build_mlapp_artifacts_and_docker_images_using_kubeflow
+```bash
+       Task1:
+       $ cd 01_using_kubeflow
+       $ mkdir model
+       $ python model.py
+       $ aws s3 cp s3://iriscloudbt-mlapp/model/rental_prediction_model.pkl model/model.pkl
+
+       Task2:
+       $ cd 01_using_kubeflow
+       $ docker build -t <docker-hub-name>/rentalmlapp .
+       $ docker push <docker-hub-name>/rentalmlapp:latest
+```
+#### Job2: Deploy ML App to Kubernetes  
+```bash
+       Task1:
+       $ cd 01_using_kubeflow
+       $ kubectl delete -f manifests/
+
+       Task2:
+       $ cd 01_using_kubeflow
+       $ kubectl apply -f manifests/
+```
 
  ####################################################################################
 # 13. Commonly Used API From Kubeflow Pipelines
